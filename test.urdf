@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot name="my_robot">
+
+ <!-- Links --> 
+
+  <link name="Caster Rl Link">
+                        <inertial>
+                          <origin xyz="0 0 0" rpy="0 0 0" />
+                          <mass value="10" />
+                          <inertia  ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0" />
+                        </inertial>
+                        <visual>
+                          <origin xyz="0 0 0" rpy="0 0 0" />
+                          <geometry>
+                            <mesh filename="Caster Rl Link.dae" />
+                          </geometry>
+                        </visual>
+                        <collision>
+                          <origin xyz="0 0 0" rpy="0 0 0" />
+                          <geometry>
+                            <mesh filename="Caster Rl Link.dae" />
+                          </geometry>
+                        </collision>
+                      </link>
+  <link name="Wheel Rl Link">
+                        <inertial>
+                          <origin xyz="0 0 0" rpy="0 0 0" />
+                          <mass value="10" />
+                          <inertia  ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0" />
+                        </inertial>
+                        <visual>
+                          <origin xyz="0 0 0" rpy="0 0 0" />
+                          <geometry>
+                            <mesh filename="Wheel Rl Link.dae" />
+                          </geometry>
+                        </visual>
+                        <collision>
+                          <origin xyz="0 0 0" rpy="0 0 0" />
+                          <geometry>
+                            <mesh filename="Wheel Rl Link.dae" />
+                          </geometry>
+                        </collision>
+                      </link>
+  <link name="Caster Rr Link">
+                        <inertial>
+                          <origin xyz="0 0 0" rpy="0 0 0" />
+                          <mass value="10" />
+                          <inertia  ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0" />
+                        </inertial>
+                        <visual>
+                          <origin xyz="0 0 0" rpy="0 0 0" />
+                          <geometry>
+                            <mesh filename="Caster Rr Link.dae" />
+                          </geometry>
+                        </visual>
+                        <collision>
+                          <origin xyz="0 0 0" rpy="0 0 0" />
+                          <geometry>
+                            <mesh filename="Caster Rr Link.dae" />
+                          </geometry>
+                        </collision>
+                      </link>
+  <link name="Wheel Rr Link">
+                        <inertial>
+                          <origin xyz="0 0 0" rpy="0 0 0" />
+                          <mass value="10" />
+                          <inertia  ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0" />
+                        </inertial>
+                        <visual>
+                          <origin xyz="0 0 0" rpy="0 0 0" />
+                          <geometry>
+                            <mesh filename="Wheel Rr Link.dae" />
+                          </geometry>
+                        </visual>
+                        <collision>
+                          <origin xyz="0 0 0" rpy="0 0 0" />
+                          <geometry>
+                            <mesh filename="Wheel Rr Link.dae" />
+                          </geometry>
+                        </collision>
+                      </link>
+  <link name="Wheel Fl Link">
+                        <inertial>
+                          <origin xyz="0 0 0" rpy="0 0 0" />
+                          <mass value="10" />
+                          <inertia  ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0" />
+                        </inertial>
+                        <visual>
+                          <origin xyz="0 0 0" rpy="0 0 0" />
+                          <geometry>
+                            <mesh filename="Wheel Fl Link.dae" />
+                          </geometry>
+                        </visual>
+                        <collision>
+                          <origin xyz="0 0 0" rpy="0 0 0" />
+                          <geometry>
+                            <mesh filename="Wheel Fl Link.dae" />
+                          </geometry>
+                        </collision>
+                      </link>
+  <link name="Wheel Fr Link">
+                        <inertial>
+                          <origin xyz="0 0 0" rpy="0 0 0" />
+                          <mass value="10" />
+                          <inertia  ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0" />
+                        </inertial>
+                        <visual>
+                          <origin xyz="0 0 0" rpy="0 0 0" />
+                          <geometry>
+                            <mesh filename="Wheel Fr Link.dae" />
+                          </geometry>
+                        </visual>
+                        <collision>
+                          <origin xyz="0 0 0" rpy="0 0 0" />
+                          <geometry>
+                            <mesh filename="Wheel Fr Link.dae" />
+                          </geometry>
+                        </collision>
+                      </link>
+  <link name="base_link">
+                        <inertial>
+                          <origin xyz="0 0 0" rpy="0 0 0" />
+                          <mass value="10" />
+                          <inertia  ixx="0" ixy="1" ixz="2" iyy="3" iyz="4" izz="5" />
+                        </inertial>
+                        <visual>
+                          <origin xyz="0 0 0" rpy="0 0 0" />
+                          <geometry>
+                            <mesh filename="base.dae" />
+                          </geometry>
+                        </visual>
+                        <collision>
+                          <origin xyz="0 0 0" rpy="0 0 0" />
+                          <geometry>
+                            <mesh filename="base.dae" />
+                          </geometry>
+                        </collision>
+                      </link>
+
+
+ <!-- Joints --> 
+
+  <joint name="Appdeck Standard Link_Caster Rl Link_joint" type="continuous">  
+                        <origin xyz="-1.700460433959961 0.10248073190450668 -0.6579478979110718" 
+                                rpy="-1.570902705192566 0.0 0.0" />  
+                        <parent link="Appdeck Standard Link" />  
+                        <child link="Caster Rl Link" />  
+                        <axis xyz="1 0 0" />   
+                    </joint>
+  <joint name="Caster Rl Link_Wheel Rl Link_joint" type="continuous">  
+                        <origin xyz="1.5214589834213257 -0.34196174144744873 0.7198033928871155" 
+                                rpy="1.570902705192566 0.0 0.0" />  
+                        <parent link="Caster Rl Link" />  
+                        <child link="Wheel Rl Link" />  
+                        <axis xyz="1 0 0" />   
+                    </joint>
+  <joint name="Appdeck Standard Link_Caster Rr Link_joint" type="continuous">  
+                        <origin xyz="-1.700460433959961 0.10299264639616013 0.7926418781280518" 
+                                rpy="-1.570902705192566 0.0 0.0" />  
+                        <parent link="Appdeck Standard Link" />  
+                        <child link="Caster Rr Link" />  
+                        <axis xyz="1 0 0" />   
+                    </joint>
+  <joint name="Caster Rr Link_Wheel Rr Link_joint" type="continuous">  
+                        <origin xyz="1.5013713836669922 -0.2971063554286957 -0.7459740042686462" 
+                                rpy="1.570902705192566 0.0 0.0" />  
+                        <parent link="Caster Rr Link" />  
+                        <child link="Wheel Rr Link" />  
+                        <axis xyz="1 0 0" />   
+                    </joint>
+  <joint name="Appdeck Standard Link_Wheel Fl Link_joint" type="continuous">  
+                        <origin xyz="-0.20082171261310577 -0.020004965364933014 -0.6607073545455933" 
+                                rpy="-3.1416990756988525 0.0 0.0" />  
+                        <parent link="Appdeck Standard Link" />  
+                        <child link="Wheel Fl Link" />  
+                        <axis xyz="1 0 0" />   
+                    </joint>
+  <joint name="Appdeck Standard Link_Wheel Fr Link_joint" type="continuous">  
+                        <origin xyz="-0.20082171261310577 -0.017650939524173737 0.794082522392273" 
+                                rpy="-3.1416990756988525 0.0 0.0" />  
+                        <parent link="Appdeck Standard Link" />  
+                        <child link="Wheel Fr Link" />  
+                        <axis xyz="1 0 0" />   
+                    </joint>
+</robot>
