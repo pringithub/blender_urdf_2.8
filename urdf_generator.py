@@ -52,7 +52,7 @@ def generate_root_link(root, export_type='.stl'):
     mesh_filename = root.name+export_type
     link_str = generate_link(root.name, mesh_filename)
     urdf_links.append(link_str)
-    #center_and_export(parent)
+    center_and_export(root)
     
 def treeTraversal(parent, export_type='.stl'):
     global urdf_joints, urdf_links, urdf_transmissions, joint_controller_gains
@@ -248,9 +248,10 @@ def center_and_export(ob):
      
     #store object location then zero it out
     location = ob.location.copy()
+    #bpy.ops.view3d.snap_cursor_to_selected()
     bpy.ops.view3d.snap_cursor_to_center() # weird location thing .. offset ?
 
-    #bpy.ops.object.location_clear()
+    bpy.ops.object.location_clear()
     name = ob.name
     #name = re.sub("[.].*?$", '', name)
     #scale = ob.scale.copy()
