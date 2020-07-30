@@ -47,14 +47,14 @@ urdf_joints = []
 urdf_links  = []
 urdf_transmissions = []
 joint_controller_gains = []
-def generate_root_link(root, export_type='.stl'):
+def generate_root_link(root, export_type='obj'):
     # base_link
-    mesh_filename = root.name+export_type
+    mesh_filename = root.name+'.'+export_type
     link_str = generate_link(root.name, mesh_filename)
     urdf_links.append(link_str)
-    center_and_export(root)
+    center_and_export(root, export_type)
     
-def treeTraversal(parent, export_type='.stl'):
+def treeTraversal(parent, export_type='obj'):
     global urdf_joints, urdf_links, urdf_transmissions, joint_controller_gains
     
     print('---')
@@ -69,7 +69,7 @@ def treeTraversal(parent, export_type='.stl'):
         child.select_set(state=True)
         
         # link
-        mesh_filename = child.name+export_type
+        mesh_filename = child.name+'.'+export_type
         link_str = generate_link(child.name, mesh_filename)
         urdf_links.append(link_str)
         
@@ -89,7 +89,7 @@ def treeTraversal(parent, export_type='.stl'):
         joint_controller_gains.append(gains_str)
         
         # export
-        center_and_export(child)
+        center_and_export(child, export_type)
         
         isLeaf = (child.children == ())
         print(isLeaf)
@@ -243,15 +243,15 @@ def save_urdf_to_file(urdf_str):
 
 
 
-def center_and_export(ob):
+def center_and_export(ob, export_type='obj'):
     bpy.context.view_layer.objects.active = ob
      
     #store object location then zero it out
     location = ob.location.copy()
-    #bpy.ops.view3d.snap_cursor_to_selected()
-    bpy.ops.view3d.snap_cursor_to_center() # weird location thing .. offset ?
+    bpy.ops.view3d.snap_cursor_to_center() ## weird location thing .. offset ?
+    bpy.ops.view3d.snap_selected_to_cursor(use_offset=False)
 
-    bpy.ops.object.location_clear()
+    #bpy.ops.object.location_clear()
     name = ob.name
     #name = re.sub("[.].*?$", '', name)
     #scale = ob.scale.copy()
@@ -265,7 +265,7 @@ def center_and_export(ob):
     ob.rotation_euler[2] = 0
     
     path = bpy.context.scene.URDF_properties_tools.file_path
-    export(path, ob)
+    export(path, ob, export_type)
     
     #restore location
     ob.location = location
@@ -277,12 +277,14 @@ def center_and_export(ob):
     
     
 # exports selected objects
-def export(path, obj, type='stl'):
+def export(path, obj, type='obj'):
     path = (path+'/') if path[-1:]!='/' else path # ensure ending '/'
     obj.select_set(True)
     filename = path + "models/" + obj.name + '.' + type
     if type=='stl':
         bpy.ops.export_mesh.stl(filepath=filename, use_selection=True)
+    elif type=='obj':
+        bpy.ops.export_scene.obj(filepath=filename, use_selection=True, axis_forward='Y', axis_up='Z')
     else:
         print('ERROR: not impl yet')
 
@@ -543,12 +545,19 @@ class URDF_properties(bpy.types.PropertyGroup):
                                         description="Some elaborate description",
                                         default="",
                                         maxlen=1024)
-    save_rviz: bpy.props.BoolProperty(name="RViz Roslaunch",
-                                      description="Create and save rviz roslaunch file")
-    save_gazebo: bpy.props.BoolProperty(name="Gazebo Roslaunch",
-                                      description="Create and save gazebo roslaunch file")
-    save_gazebo_spawner: bpy.props.BoolProperty(name="Gazebo Spawner",
-                                      description="Create and save gazebo spawner roslaunch file")                                                                    
+    export_type: bpy.props.EnumProperty(
+        name="Selection",
+        items=(
+               ('stl', 'stl', 'Export objects in stl files'),
+               ('obj', 'obj', 'Export objects in obj files'),
+            ),
+        )
+#    save_rviz: bpy.props.BoolProperty(name="RViz Roslaunch",
+#                                      description="Create and save rviz roslaunch file")
+#    save_gazebo: bpy.props.BoolProperty(name="Gazebo Roslaunch",
+#                                      description="Create and save gazebo roslaunch file")
+#    save_gazebo_spawner: bpy.props.BoolProperty(name="Gazebo Spawner",
+#                                      description="Create and save gazebo spawner roslaunch file")                                                                    
                                                                                
                               
 # Panel display
@@ -570,8 +579,12 @@ class URDF_PT_PANEL(bpy.types.Panel):
         layout.label(text="2. Select save location (abspath)")
         row = layout.row()
         row.prop(URDF_properties_tools, "file_path")
-        
-        layout.label(text="3. Select Root Object")
+   
+        layout.label(text="3. Choose Export Type")     
+        row = layout.row()
+        row.prop(URDF_properties_tools, "export_type")
+
+        layout.label(text="4. Select Root Object")
         
         #layout.label(text="4. Select Additional Files to Save")
         #row = layout.row()
@@ -581,7 +594,7 @@ class URDF_PT_PANEL(bpy.types.Panel):
         #row = layout.row()
         #row.prop(URDF_properties_tools, "save_gazebo_spawner")
         
-        layout.label(text="4. Generate URDF")
+        layout.label(text="5. Generate URDF")
         row = layout.row()
         row.scale_y = 2.0
         row.operator(".generate_urdf", text="Generate URDF")
@@ -600,8 +613,9 @@ class GenerateURDF_Operator(bpy.types.Operator):
         joint_controller_gains = []
         
         root = bpy.context.selected_objects[0]
-        generate_root_link(root)
-        treeTraversal(root)
+        export_type = bpy.context.scene.URDF_properties_tools.export_type
+        generate_root_link(root, export_type)
+        treeTraversal(root, export_type)
         #print(urdf_links)
         
         urdf_str = generate_urdf_str(urdf_links, urdf_joints)
