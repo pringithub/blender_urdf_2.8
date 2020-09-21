@@ -94,7 +94,7 @@ def treeTraversal(parent, export_type='obj'):
         isLeaf = (child.children == ())
         print(isLeaf)
         if not isLeaf:
-            treeTraversal(child)
+            treeTraversal(child, export_type)
 
              
     
@@ -243,7 +243,7 @@ def save_urdf_to_file(urdf_str):
 
 
 
-def center_and_export(ob, export_type='obj'):
+def center_and_export(ob, export_type='obj', decimate_ratio=1.00):
     bpy.context.view_layer.objects.active = ob
      
     #store object location then zero it out
@@ -264,8 +264,17 @@ def center_and_export(ob, export_type='obj'):
     ob.rotation_euler[1] = 0
     ob.rotation_euler[2] = 0
     
+    decimate_ratio = bpy.context.scene.URDF_properties_tools.decimate_ratio
+    if decimate_ratio is not 1.00:
+        print('Decimating')
+        decimate_object(ob, decimate_ratio)
+    
     path = bpy.context.scene.URDF_properties_tools.file_path
     export(path, ob, export_type)
+    
+    if decimate_ratio is not 1.00:
+        print('Removing decimate')
+        undecimate_object(ob)
     
     #restore location
     ob.location = location
@@ -274,10 +283,15 @@ def center_and_export(ob, export_type='obj'):
     ob.rotation_euler[2] = rotz
     #ob.scale = scale
     
-    
+def decimate_object(obj, ratio=1.00):
+    bpy.ops.object.modifier_add(type='DECIMATE')
+    bpy.context.object.modifiers["Decimate"].ratio = ratio
+def undecimate_object(obj):
+    bpy.ops.object.modifier_remove(modifier="Decimate")
+
     
 # exports selected objects
-def export(path, obj, type='obj'):
+def export(path, obj, type='obj', ):
     path = (path+'/') if path[-1:]!='/' else path # ensure ending '/'
     obj.select_set(True)
     filename = path + "models/" + obj.name + '.' + type
@@ -552,6 +566,11 @@ class URDF_properties(bpy.types.PropertyGroup):
                ('obj', 'obj', 'Export objects in obj files'),
             ),
         )
+    decimate_ratio: bpy.props.FloatProperty(name="Decimate Ratio",
+                             description="Percentage to decimate object by before exporting",
+                             default=1.00,
+                             min=0.00,
+                             max=1.00)
 #    save_rviz: bpy.props.BoolProperty(name="RViz Roslaunch",
 #                                      description="Create and save rviz roslaunch file")
 #    save_gazebo: bpy.props.BoolProperty(name="Gazebo Roslaunch",
@@ -583,8 +602,12 @@ class URDF_PT_PANEL(bpy.types.Panel):
         layout.label(text="3. Choose Export Type")     
         row = layout.row()
         row.prop(URDF_properties_tools, "export_type")
+        
+        layout.label(text="4. Set Decimate Ratio")     
+        row = layout.row()
+        row.prop(URDF_properties_tools, "decimate_ratio")
 
-        layout.label(text="4. Select Root Object")
+        layout.label(text="5. Select Root Object")
         
         #layout.label(text="4. Select Additional Files to Save")
         #row = layout.row()
@@ -594,7 +617,7 @@ class URDF_PT_PANEL(bpy.types.Panel):
         #row = layout.row()
         #row.prop(URDF_properties_tools, "save_gazebo_spawner")
         
-        layout.label(text="5. Generate URDF")
+        layout.label(text="6. Generate URDF")
         row = layout.row()
         row.scale_y = 2.0
         row.operator(".generate_urdf", text="Generate URDF")
@@ -652,5 +675,6 @@ def unregister():
 if __name__=='__main__':
     register()
     
+
 
 

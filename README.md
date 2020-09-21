@@ -40,4 +40,4 @@
 </robot>
 ```
 
-![](./media/blender_urdf_basic.png)
+![](./media/urdf_generator.png)
